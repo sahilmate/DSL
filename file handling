@@ -1,0 +1,135 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+#define MAX_NAME_LENGTH 50
+#define MAX_ADDRESS_LENGTH 100
+
+struct Student {
+  int roll_number;
+  string name;
+  char division;
+  string address;
+};
+
+void add_student(fstream& fp) {
+  Student student;
+
+  cout << "Enter student details:\n";
+  cout << "Roll number: ";
+  cin >> student.roll_number;
+
+  // Check for duplicate roll number
+  fp.seekg(0, ios::beg);
+  while (fp.read((char*)&student, sizeof(student))) {
+    if (student.roll_number == student.roll_number) {
+      cout << "Error: Roll number already exists.\n";
+      return;
+    }
+  }
+
+  cout << "Name: ";
+  getline(cin, student.name); // Read name with spaces
+
+  cout << "Division (single character): ";
+  cin >> student.division;
+  cin.ignore(); // Clear input buffer after single character
+
+  cout << "Address: ";
+  getline(cin, student.address); // Read address with spaces
+
+  fp.write((char*)&student, sizeof(student));
+  cout << "Student added successfully.\n";
+}
+
+void delete_student(fstream& fp) {
+  int roll_number;
+  int found = 0;
+
+  cout << "Enter roll number of student to delete: ";
+  cin >> roll_number;
+
+  fstream temp_fp("temp.dat", ios::out | ios::binary);
+  if (!temp_fp.is_open()) {
+    cout << "Error creating temporary file.\n";
+    return;
+  }
+
+  Student student;
+  while (fp.read((char*)&student, sizeof(student))) {
+    if (student.roll_number != roll_number) {
+      temp_fp.write((char*)&student, sizeof(student));
+    } else {
+      found = 1;
+      cout << "Student with roll number " << roll_number << " deleted.\n";
+    }
+  }
+
+  fp.close();
+  temp_fp.close();
+  remove("student.dat"); // Remove original file
+  rename("temp.dat", "student.dat"); // Rename temporary file to original
+
+  if (!found) {
+    cout << "Student with roll number " << roll_number << " not found.\n";
+  }
+}
+
+void display_student(fstream& fp) {
+  int roll_number;
+  int found = 0;
+
+  cout << "Enter roll number of student to display: ";
+  cin >> roll_number;
+
+  Student student;
+  while (fp.read((char*)&student, sizeof(student))) {
+    if (student.roll_number == roll_number) {
+      cout << "Roll number: " << student.roll_number << endl;
+      cout << "Name: " << student.name << endl;
+      cout << "Division: " << student.division << endl;
+      cout << "Address: " << student.address << endl;
+      found = 1;
+      break;
+    }
+  }
+
+  if (!found) {
+    cout << "Student with roll number " << roll_number << " not found.\n";
+  }
+}
+
+int main() {
+  fstream fp("student.dat", ios::in | ios::out | ios::binary);
+
+  if (!fp.is_open()) {
+    fp.open("student.dat", ios::out | ios::binary);
+    if (!fp.is_open()) {
+      cout << "Error creating file.\n";
+      return 1;
+    }
+  }
+
+  int choice;
+  while (true) {
+    cout << "\nMenu:\n";
+    cout << "1. Add student\n";
+    cout << "2. Delete student\n";
+    cout << "3. Display student\n";
+    cout << "4. Exit\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    switch (choice) {
+      case 1:
+        add_student(fp);
+        break;
+      case 2:
+        delete_student(fp);
+        // Reopen file in read-write mode after deletion
+        fp.close();
+        fp
+
+

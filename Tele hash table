@@ -1,0 +1,75 @@
+size = int(input("Enter size of hash table: "))
+n = int(input("Enter number of records to be inserted: "))
+hash_table = [-1] * size
+
+def linear_probing(tel_no):
+    for i in range(size):
+        index = (tel_no + i) % size
+        if hash_table[index] == -1:
+            hash_table[index] = tel_no
+            print("Record inserted successfully.")
+            display()
+            break
+    else:
+        print("Record insertion failed. Table is already full.")
+
+def quadratic_probing(tel_no):
+    for i in range(size):
+        index = (tel_no + i**2) % size
+        if hash_table[index] == -1:
+            hash_table[index] = tel_no
+            print("Record inserted successfully.")
+            display()
+            break
+    else:
+        print("Record insertion failed. Table is already full.")
+
+def search(tel_no):
+    count = 1
+    for i in range(size):
+        index = (tel_no + i) % size
+        if hash_table[index] == tel_no:
+            print("Element found at index:", index)
+            print("Required record:", hash_table[index])
+            print("No of comparisons:", count)
+            break
+        elif hash_table[index] != tel_no:
+            i += 1
+            count += 1
+    else:
+        print("Record not found.")
+
+def display():
+    print("Index Telephone Number")
+    for i in range(size):
+        if hash_table[i] != -1:
+            print(i, " ", hash_table[i])
+
+while True:
+    ch = int(input("\n1. Insert data using linear probing \n2. Insert data using quadratic probing \n3. Display the hash table \n4. Search the number \n5. Exit \n"))
+    
+    if ch == 1:
+        for i in range(n):
+            tel = int(input("Enter telephone number: "))
+            linear_probing(tel)
+            
+    elif ch == 2:
+        for i in range(n):
+            tel = int(input("Enter telephone number: "))
+            quadratic_probing(tel)
+
+    elif ch == 3:
+        display()
+        
+    elif ch == 4:
+        for i in range(n):
+            tel = int(input("Enter the number to be searched: "))
+            search(tel)
+            
+    elif ch == 5:
+        print("Program Exited.")
+        break
+    
+    else:
+        print("Wrong Input")
+

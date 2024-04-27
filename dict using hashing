@@ -1,0 +1,80 @@
+class dict:
+    def _init_(self):
+        self.keyword = ""
+        self.meaning = ""
+        self.hashtable = [["xxx", "yyy"] for _ in range(11)]
+        self.key = 0
+
+    def input(self):
+        self.keyword = input("\nENTER KEYWORD : ")
+        self.meaning = input("\nENTER MEANING : ")
+        self.genkey()
+
+    def genkey(self):
+        sum = 0
+        for j in range(len(self.keyword)):
+            sum += ord(self.keyword[j])
+        self.key = sum % 11
+        self.linear_probe()
+
+    def linear_probe(self):
+        flag = 0
+        if self.hashtable[self.key][0] == "xxx":
+            self.hashtable[self.key][0] = self.keyword
+            self.hashtable[self.key][1] = self.meaning
+        else:
+            i = 0
+            for i in range(self.key + 1, 11):
+                if self.hashtable[i][0] == "xxx":
+                    self.hashtable[i][0] = self.keyword
+                    self.hashtable[i][1] = self.meaning
+                    flag = 1
+                    break
+            if flag == 0:
+                for i in range(0, self.key - 1):
+                    if self.hashtable[i][0] == "xxx":
+                        self.hashtable[i][0] = self.keyword
+                        self.hashtable[i][1] = self.meaning
+                        flag = 1
+                        break
+
+    def display(self):
+        print("\n-------------DISPLAYING DICTIONARY---------------\n")
+        for i in range(11):
+            print(self.hashtable[i][0], "\t", self.hashtable[i][1])
+
+    def search(self, srch):
+        for i in range(11):
+            if self.hashtable[i][0] == srch:
+                print("\nKEYWORD EXISTS : \n")
+                print(self.hashtable[i][0], "\t", self.hashtable[i][1])
+
+    def delkey(self, dekey):
+        for i in range(11):
+            if self.hashtable[i][0] == dekey:
+                self.hashtable[i][0] = "xxx"
+                self.hashtable[i][1] = "yyy"
+
+
+n = 0
+ch = 0
+ans = 0
+d = dict()
+keyword = ""
+while ans == 1:
+    print("\n-----------------MENU----------------\n1. INPUT DATA\n2. DISPLAY DICTIONARY\n3. SEARCH KEYWORD\n4. DELETE KEY\n")
+    ch = int(input("\nENTER CHOICE : "))
+    if ch == 1:
+        n = int(input("\nENTER NO OF KEYWORDS YOU WISH TO ENTER IN THE DICTIONARY : "))
+        for i in range(n):
+            d.input()
+    elif ch == 2:
+        d.display()
+    elif ch == 3:
+        keyword = input("\nENTER KEYWORD TO BE SEARCHED : ")
+        d.search(keyword)
+    elif ch == 4:
+        keyword = input("\nENTER KEYWORD TO BE DELETED : ")
+        d.delkey(keyword)
+    ans = int(input("\nDO YOU WISH TO CONTINUE ? (0/1 ): "))
+
